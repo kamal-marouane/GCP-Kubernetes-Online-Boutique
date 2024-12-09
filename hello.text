@@ -1,0 +1,247 @@
+Home Lectures Resources
+ 
+Lab Assignment (Fall 2024)
+ 
+Table of Contents
+The report
+Your code
+Main instructions
+Recommendations
+Deploying the original application in GKE
+Analyzing the provided configuration
+Deploying the load generator on a local machine
+Deploying automatically the load generator in Google Cloud
+Monitoring the application and the infrastructure
+Performance evaluation
+Canary releases
+Monitoring the application and the infrastructure [Bonus]
+Collecting more specific metrics
+Raising alerts
+Performance evaluation [Bonus] Identifying bottlenecks
+Autoscaling [Bonus]
+ 
+This lab is about the deployment of a micro-service application in a Kubernetes cluster, the management of this application and of the cluster. It includes a set of mandatory steps as well as additional steps that will allow you to extend the work in different directions.
+ 
+Important information
+ 
+Collaboration and plagiarism
+You are encouraged to discuss ideas and problems related to this project with the other students. You can also look for additional resources on the Internet. However, we consider cheating and plagiarism very seriously. Hence, if any part
+of your final submission reflects influences from external sources, you must cite these external sources in your report. Also, any part of your design, your implementation, and your report should come from you and not from other students. In case of plagiarism, your submission will not be graded and appropriate actions will be taken.
+If you store your work in a Git repository on a platform such as GitHub or GitLab, your files must not be publicly accessible.
+ 
+Your submission
+How to submit? see here
+Before the deadline of this lab assignment, you should submit in a single email:
+A report that summarizes your work
+The code corresponding to the different steps that you have covered
+The title of the email must be: [M2 Mosig Cloud] lab submission. The body of the email must contain the name(s) of the student(s).
+Please find below the main instructions regarding each part of the submission.
+The report
+The report must be in md (MarkDown) or pdf format. (Other formats will be rejected.)
+It must include the following information:
+The name of the participants.
+A list of the steps that you have implemented/studied (your main achievements)
+For each step, provide all information required to appreciate your work. This can include:
+Your design choices
+Your technical choices
+The experiments you run
+The results you obtained (presented as graphs when possible) The conclusions you have drawn
+Your report can also include a description of the steps that your tried but did not succeed to address. In this case, describe:
+The main problems that you encountered
+Possible solutions to solve these problems (even if you did not have the time to implement these solutions)
+Your code
+To submit your code, you can:
+Attach it as an archive in the same email as your report submission
+Make it available in a GitHub/GitLab project, to which you will have given us access
+Your code should include a minimal documentation (README) describing:
+Where to find the code corresponding to the different steps of the lab How to run/deploy the provided code
+Although the documentation can be short, it should be sufficiently clear/detailed to allow the teachers to reproduce the tests/experiments that you have done.
+ 
+Overview
+Main instructions
+	 	The lab is divided into 3 parts:
+The Base steps are mandatory steps. You are asked to terminate these steps before moving to the rest.
+The Advanced steps are also mandatory. There are considered more difficult than the base steps.
+The Bonus steps are possible directions that we suggest you to explore to extend this lab.
+Doing at least the base steps is required to obtain a passing grade. Doing the base and advanced steps is required to get a good grade. To get a very good grade, you need to have investigated at least some bonus steps.
+For each step, only high-level guidelines are provided. It is part of your work to understand the different technologies, and how to use them to solve the problems you encounter.
+ 	We are aware that some of the steps can be challenging. Hence, it is possible that you will fail to complete some steps. This does not mean that your work does not deserve any points. Properly analyzing and documenting a problem (and, if possible, proposing solutions) could be as valuable as solving the problem from the first try by luck.
+ 	The Bonus steps cover a broad scope of topics. We are free to work on the topics that you find more interesting. There might also be some topics that you would like to work on, but that are not listed in the description. You are encouraged to dig into the topics that you are interested in, but verify which the teaching staff first that they fit in the scope of the lab.
+ 	While some links to useful documentations are provided, some parts of this lab will also require searching for additional documentations and choosing between different possible tools and technical approaches to design and implement your solutions. In other words, there is no requirement to use all the documentations listed here and you will also certainly need to find and select additional documentations.
+Recommendations
+ 	We strongly recommend you to document your work while you are working on the different tasks to avoid forgetting important details.
+ 	Making things automatic should be one of your primary goals, so that, you can reproduce the same experiments later on.
+It is also important that we can easily reproduce what you did, using the code you will submit.
+Remember that you pay for any resource you use on Google Cloud. Making things automatic should also allow you to rapidly free all the resources you allocated when finishing working on the lab.
+ 	For some of the questions, it can make sense to start working on your local machine (using tools such as Docker and Minikube) before launching tests on Google Cloud. This may help you saving time and/or GCP credits.
+ 
+The “Online Boutique” demo application
+This lab work targets a microservice demo application developed by Google and named “Online Boutique”. As the name suggests, this is a mock application that simulates an online shop. It is made of a combination of 11 microservices. For most of these services, the implementation is very simplified (compared to the expected features of a realistic application). Nonetheless, it is sufficient to illustrate the structure and operation of a reasonably complex cloud-native application.
+The demo application is available from its GitHub repository. The main documentation can be found in the top-level README file and in the docs folder.
+Note: This demo application used to be named “Hipster Shop”. Some documents and code/configuration files still use this name.
+ 
+	[	]
+Base steps [Mandatory]
+Deploying the original application in GKE
+Follow the guidelines from the documentation to try and deploy the demo application on GKE. Check that the application is working correctly - via the following means:
+by using a web browser
+by checking the output of the (continuously running) Locust load generator (also known as “load injector”)
+Note the following points:
+ 	The default standard GKE cluster setup (such as the one used in the introductory lab) will not have enough resources to run all the required pods.
+ 	You will not encounter this issue when following the steps described in the quickstart guide of Online Boutique. This is because, in that case, the GKE cluster is configured in “Autopilot” mode (as opposed to “standard” mode). Briefly explain what is this Autopilot mode and why it hides the problem.
+ 	The Autopilot mode, while useful, also has some downsides compared to the standard mode. One of them is that its billing is more expensive. Another one is that it is less flexible in terms of control knobs provided to the GKE user. If you want to deploy the full application on GKE in standard mode, we recommend using nodes with the following characteristics:
+ 
+Analyzing the provided configuration
+To better understand how the deployed application is configured, we would like you to analyze the configuration file that is used for deployment.
+In this step, we ask you to select one service (we let you choose the one you prefer), and to explain in your report the purpose of the different parameters that are used to configure this service in the file kubernetes-manifests.yaml.
+ 
+Deploying the load generator on a local machine
+To test your application, it would be better to deploy the load generator on a machine that is outside of the Kubernetes cluster (so that, the load generator does not consume the resources of the cluster).
+As an intermediate step, we ask you to manually deploy the load generator on a local machine – either:
+your own laptop (or a lab room machine) in the google cloud shell
+To do so, the best solution is to deploy the load generator as a Docker container. Several resources can help you in this task:
+ 	The code of the load generator service includes a Locust file to specify the load to inject, as well as a Dockerfile that describes how the load generator that is deployed by default is configured.
+	 	The Locust documentation explain how to use Locust, including explanations about to use it with Docker.
+If you are unfamiliar with Docker, we suggest that you start by learning the basics. Here are some resources that might help you (many more resources are available on the Web):
+ 
+Deploying automatically the load generator in Google Cloud
+For a more convenient and realistic way of testing your application, it would be better to deploy the load generator in the cloud but outside of the GKE cluster where the online boutique runs.
+In this stage, we ask you to deploy the load generator in a virtual machine (VM) that you will have reserved and configured on Google Cloud (the VM service of Google Cloud is named Google Compute Engine - GCE). To simplify the deployment of the load generator, you should re-use the work done in the previous step and take advantage of Docker.
+Reserving and configuring a VM manually is a first option to deploy the load generator. However, this is an operation that will probably have to execute multiple times to run tests. Being able to do that automatically would be a better option.
+Hence, we ask you to adopt an infrastructure-as-code approach, where you write the code that will allow to do all these operations automatically, instead of executing these operations manually. Different tools can be used for this purpose, some of the most popular are:
+Terraform for resource provisioning (= reserving cloud resources) Ansible for resource configuration
+Note that Terraform can also be used for resource configuration.
+Here are some simple examples that can help you in the design of the solution for this step:
+ 
+Advanced steps [Mandatory]
+Monitoring the application and the infrastructure
+When you deploy a GKE cluster, some monitoring tools are already deployed for you, and you can already observe some monitoring data through dashboards accessible through the Google Cloud console.
+Still, it can be important to deploy your own monitoring infrastructure. Hence, in this step, we ask you to deploy your own monitoring stack in your Kubernetes cluster. The stack should be based on:
+Prometheus for collecting data
+Grafana to produce dashboards out of the collected data.
+Both components should be deployed inside your Kubernetes cluster.
+Your monitoring infrastructure should collect at least the following information:
+Information about resource consumption at the level of each node Information about resource consumption at the level of each pod
+You should provide already configured Grafana dashboards that allow visualizing these data.
+Note that collecting information at the node and at the pod levels requires deploying exporters. More specifically, in this case, the node exporter and cAdvisor can be good options.
+Suggestions to further extend the work on monitoring are described here.
+ 
+Performance evaluation
+The load generator coming with the application allows you to evaluate the performance of your application. While injecting load in the application, Locust collects metrics such as the response time and the number of failed requests for different types of requests.
+In this part, we ask you to conduct a performance evaluation of your application running in your Kubernetes cluster.
+Here are our main recommendations:
+ 	To obtain meaningful results, your load generator should run outside of your Kubernetes cluster, but inside the datacenter where the application is deployed (so that performance is not simply limited by the network performance between the load generator and the application). It would make sense to use your solution based on Terraform (developed in a previous step) to automatically deploy the load generator here.
+	 	You should specify the methodology you will follow for running your performance evaluation. This includes:
+Defining the parameters of Locust to increase the number of clients sending requests in parallel. Considering creating multiple Locust instances to avoid being limited by the performance of the VM on which the load generator is running.
+	 	Your report should include graphs that present the main results you obtain, and an analysis of these results.
+	 	Note that Locust allows you to collect the results of your experiments in a CSV file, for later analysis.
+Suggestions to further extend the work on performance evaluation are described here.
+ 
+Canary releases
+In this step, the goal is to support canary releases of the microservices, which is a useful technique to achieve continuous deployment. More precisely, we want to test and deploy a new version v2 of a microservice while still using the current (stable) version v1 of the service for a majority of the production requests. For simplicity, in this lab, we will apply this technique only to a single microservice within our software architecture, and we will only consider this canary technique in the case of a stateless microservice. The choice of the microservice to consider for this exercise is left to you.
+Some of the links below might be helpful for this part:
+Kubernetes documentation: Managing Resources
+Canary deployments using Istio
+ProductCatalog Canary Deployment demo
+Automated canary deployments with Flagger and Istio
+Canary deployments using Kubernetes Gateway API, Flagger and Google Cloud Deploy
+For this part, the first thing you have to do is modifying the code of the microservice to create a new version (v2). For simplicity, you can keep the code very similar to the one of the first version and simply modify a text string or value displayed to the end user (so that the change of version can be easily noticed when testing).
+Then, you are asked to implement and test the following steps:
+ 	Deploy the new version v2 so that it co-exists with the initial version v1 and modify the configuration to have 25% of the requests sent to v2.
+ 	Describe in your report the methodology you use to check that the traffic is split correctly between v1 and v2.
+ 	Extend your approach to be able to fully switch to v2 (and disable v1, once v2 has been successfully validated) without disrupting the applications (and the in-flight requests).
+Suggestions to further extend the work on canary releases are described here.
+ 
+Bonus steps
+Monitoring the application and the infrastructure [Bonus]
+These steps extends the advanced task: Monitoring the application and the infrastructure.
+Collecting more specific metrics
+In addition to general metrics about resource consumption, dedicated exporters can allow you to collect more specific metrics related to some components of your application. For instance, one could:
+Export redis-specific metrics through the dedicated exporter Export metrics related to gRPC
+You could even envision to write your own exporter to collect application-specific metrics.
+In this part, we suggest you to dig into this topic.
+Raising alerts
+Prometheus allow users to configure alerts on some events, and to send these alerts through different means.
+We suggest you to look at how this work, and to configure some alerts for your deployed application.
+ 
+Performance evaluation [Bonus]
+This step extends the advanced task: Performance evaluation.
+Identifying bottlenecks
+When evaluating the performance of your application, you should be able to identify the maximum performance of your application for a default deployment configuration. The maximum performance is when adding more clients does not translate into processing more requests, or said differently, when adding more clients results in significantly higher response time.
+When the maximum performance is reached, it means that there are one or several bottlenecks. A bottleneck is hardware or software component that is saturated and prevents the performance from going higher.
+We suggest that you take advantage of the monitoring infrastructure you deployed (Step Monitoring the application and the infrastructure) to identify the bottleneck(s) in your deployed application.
+ 
+Autoscaling [Bonus]
+Autoscaling techniques are used to adapt the amount of resources allocated to an application/service/cluster to the workload. In Kubernetes, different scaling mechanisms are available:
+Horizontal Pod Autoscaling allows adapting the number of replicas of a pod to the workload.
+Vertical Pod Autoscaling allows adapting the amount of resources assigned to existing pods.
+Cluster Autoscaling allows adapting the number of nodes of the Kubernetes cluster.
+We suggest that you try to apply autoscaling strategies to improve the performance of your application. This task involves:
+Designing a strategy to use autoscaling to improve performance
+To design this strategy, you could take advantage of the information about bottlenecks in your application that you may have identified previously
+This strategy could combine the use of different autoscalers (for instance, HPA + Cluster Autoscaling) In all cases, the strategy you propose should be clearly described and justified in your report.
+Running new performance evaluations to demonstrate that the proposed strategy works efficiently in practice You could also consider multiple strategies and compare their efficiency
+Optimizing the cost of your deployment [Bonus]
+Any resource used on a public cloud infrastructure has a cost. The less resources you use, the less you pay. In this step, we suggest you to study how to minimize resource usage for your deployed application. Different aspects can be considered here. Here are some directions you could explore:
+Resource optimization (Through autoscaling for instance)
+Pricing optimization (Selecting resources with a lower price)
+Resource consumption should always be analyzed with respect to performance to draw meaningful conclusions. Consuming a large amount of resources to process a high number of requests per second can make sense, while consuming the same amount of resources to process a few requests per second might not be satisfying.
+Performance may also depend on which resources are allocated (with the same budget, I could allocate several small VMs or a few large VMs), and to which part of the system the resources are allocated (I could allocate more resources to one service or to another).
+Run tests and present the results in your report, as well as the conclusions your draw from these results. Consider cost metrics to analyze your results (e.g., dollars per hour, dollars per 1000 requests, etc.).
+ 
+Canary releases [Bonus]
+This step extends the advanced task: Canary releases.
+We now consider a version v3 of the microservice, and we assume that this version is defective. The defect could be a bug or a performance issue. Here, for simplicity, v3 will be identical to v2 except the fact that it introduces a significant additional (artificial) delay in the processing of each request (e.g., 3 seconds per request).
+Set up a configuration allowing to automatically test a canary release and rollback (remove) it when it is found to be defective.
+ 
+Managing a storage backend for logging orders [Bonus]
+The goal of this step is to extend the initial architecture of the “online boutique” web application: we will add a service that will store a log of all the orders placed by the customers of the shop.
+Introducing the log
+To introduce the log service and integrate it in the application, there are several things to do:
+ 	Create a new microservice (OrderLog) that will receive a request for each order placed by a customer of the shop. The first implementation can be very simple: it just needs to print a text message in the debug console to describe the new order.
+ 	Modify the code of one of the other microservices to invoke OrderLog upon the completion of a new customer order. By default, we suggest doing that within CheckoutService.
+	 	Modify the build and deployment configuration to take into account this new microservice.
+Notes :
+	 	You can use the programming language of your choice for the implementation of the OrderLog microservice.
+We recommend using gRPC for invoking the OrderLog microservice.
+You can of course look at some examples of microservices to facilitate the implementation of your OrderLog service. In addition to the the microservices of the “Online Boutique” demo application, you can also look at the following tutorials:
+Python Microservices With gRPC
+BFF Pattern with Go Microservices using REST & gRPC
+Using a storage backend for the log
+Now the goal is to plug a real storage backend behind the OrderLog microservice in order to store the log: in this design, OrderLog is a stateless entry point that hides the implementation of the storage backend and forwards the requests to the (stateful) backend.
+You are free to choose the type of storage backend and the corresponding implementation. We recommend using a database and we suggest some typical examples:
+a key-value store (for example, Redis) a relational database (for example, MySQL or PostgreSQL) a document-oriented database (for example, MongoDB)
+…
+In any case, we advise you to use a simple data model for storing the orders details (advanced data management is outside of the scope of this course). Similarly, you are not required to deal with database transactional guarantees.
+Another important design question is the management of the storage backend. There are three main ways to architect the storage backend.
+ 	(1) Using a managed external service: i.e., a storage service whose deployment (and provisioning/scaling) is fully managed by the cloud provider. See the following page for a list of managed databases available in GCP), such as Cloud SQL (relational) and Firestore (document oriented).
+ 	(2) Using a non-managed external service: for example, you can install your own database instance in a GCE (Google Compute Engine) virtual machine.
+ 	(3) Using a service inside GKE: i.e., in that case, your database is running as a containerized service managed by GKE, like the other services that compose your applications (but unlike most of the other services of the online boutique application, it is a stateful service).
+You are free to choose the any of the three approaches listed above. Note however that:
+A brief justification for your choice is expected in your report.
+Approaches (2) and (3) will be granted more points (if implemented correctly) because they inherently require more work.
+ 	We recommend choosing either approach 1 (the most simple one) or approach 3 (the most integrated one with respect to GKE) .
+Important note: Checking the correct operation of your log will require the possibility to query the backend. There is no obligation for you to extend the implementation of the application (i.e., introducing a graphical/web interface to display the contents of the log) for this purpose; this would of course be more realistic but also time consuming.
+Instead, you can simply write a small script or connect to a web interface of the database to manually query it.
+Making the log persistent
+If this aspect has not already been addressed in the previous steps, the goal is to achieve persistence for your order log. This means that the online boutique application must be able to retrieve the contents of the log even across shutdowns and restarts (of the application, of the GKE cluster, of the GCE virtual machines, etc.).
+ 
+Deploying your own Kubernetes infrastructure [Bonus]
+The goal of this step is to replace the managed Kubernetes infrastructure operated by the cloud provider (in this case, GKE operated by GCP) by a Kubernetes infrastructure under your control. This involves the following requirements:
+	 	Control plane:
+Allocating (virtual or physical) machines to host the control plane of your Kubernetes cluster
+Deploying and setting up the different software components of the Kubernetes control plane Data plane:
+Allocating (virtual or physical) machines to act as worker nodes in your Kubernetes cluster
+Deploying and setting up the different software components that must run on each worker node Testing your infrastructure by deploying various demo applications/scenarios to validate diverse Kubernetes features (in particular, different types of controllers)
+Some recommendations:
+Using a minimalist Kubernetes distribution, like k3s or k0s, will significantly facilitate the setup work. In any case, it is important to identify the Kubernetes components that are really/strictly necessary for your needs.
+Using virtual machines (rather than physical machines) for the worker nodes is simpler and cheaper.
+Using containers (rather than virtual machines) to run the pods is simpler.
+Review of recent publications [Bonus]
+During the course, we have read different research papers (we refer here to the “Mandatory Readings”). We suggest you to select the article you enjoyed the most and to write a review of this article. Reviewing an article involves doing some of the following things:
+Summarizing the main contributions of the paper
+Discussing the main strengths and weaknesses of the study
+Explaining in details one or several results that you found especially interesting
+Making links between information presented in the paper and topics studied during the course and/or observations made during this lab
+	 	Taking inspirations from ideas/experiments presented in the paper to extend your work on this lab
+Warning: A simple summary of an article through copy/paste of existing content or minimal rephrasing will not give points
