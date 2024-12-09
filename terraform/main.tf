@@ -1,7 +1,7 @@
 terraform {
   required_version = ">= 0.12"
   backend "gcs" {
-    bucket = "GCP-Online-Boutique-state-bucket"
+    bucket = "gcp-online-boutique-state-bucket"
     prefix = "terraform/state"
   }
 }
