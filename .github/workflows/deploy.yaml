@@ -31,11 +31,11 @@ jobs:
 
     - name: Initialize Terraform
       run: terraform init
-      working-directory: ./terraform/gke
+      working-directory: ./terraform
 
     - name: Apply Terraform
       run: terraform apply -auto-approve
-      working-directory: ./terraform/gke
+      working-directory: ./terraform
 
     - name: Set up kubectl
       uses: azure/setup-kubectl@v1
