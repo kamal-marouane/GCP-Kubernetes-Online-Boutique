@@ -60,3 +60,11 @@ jobs:
 
     - name: Get frontend service external IP
       run: kubectl get service frontend-external | awk '{print $4}'
+
+    - name: Terraform destroy on failure
+      if: failure()
+      run: terraform destroy -auto-approve
+      env:
+        TF_VAR_project_id: ${{ env.GCP_PROJECT }}
+        TF_VAR_region: ${{ env.GCP_REGION }}
+        TF_VAR_cluster_name: ${{ env.CLUSTER_NAME }}
