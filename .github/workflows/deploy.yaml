@@ -42,13 +42,14 @@ jobs:
       run: |
         # Add the Google Cloud SDK distribution URI as a package source
         echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-        
-        # Import the Google Cloud public key
-        curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-        
+
+        # Download and add the Google Cloud public keyring
+        curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+
         # Update and install the plugin
         sudo apt-get update
         sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
 
     - name: Get GKE credentials
       run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }} --region ${{ env.GCP_REGION }} --project ${{ env.GCP_PROJECT }}
